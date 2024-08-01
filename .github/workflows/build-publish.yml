@@ -50,10 +50,15 @@ jobs:
             IMAGE_NAME="-$IMAGE_NAME"
           fi
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+      - name: Extract dir name
+        id: dir-name
+        run: |
+          DIR_NAME=$(basename $(dirname ${{ matrix.dockerfile }}))
+          echo "DIR_NAME=$DIR_NAME" >> $GITHUB_OUTPUT
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ${{ steps.dir-name.outputs.DIR_NAME }}
           file: ${{ matrix.dockerfile }}
           platforms: linux/amd64
           push: true
